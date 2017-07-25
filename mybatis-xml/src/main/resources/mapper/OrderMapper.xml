@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huwei.dao.OrderMapper">
+    <!--<resultMap type="com.huwei.domain.Order" id="orderMap">
+        <id column="id" property="id"/>
+        <result column="orderNo" property="orderNo"/>
+        <result column="operName" property="operName"/>
+        <collection property="orderLines" javaType="ArrayList" ofType="com.huwei.domain.OrderLine">
+            <id column="olId" property="id"/>
+            <result column="productName" property="productName"/>
+            <result column="productPrice" property="productPrice"/>
+            <result column="productQty" property="productQty"/>
+        </collection>
+    </resultMap>-->
+
+    <resultMap type="com.huwei.domain.Order" id="orderMap">
+        <id column="id" property="id"/>
+        <result column="orderNo" property="orderNo"/>
+        <result column="operName" property="operName"/>
+        <collection property="orderLines"  ofType="OrderLine" select="queryOrderLinesByOrderId" column="id" />
+    </resultMap>
+
+    <select id="queryOrderById" resultMap="orderMap">
+        select * from order1 where id=#{id}
+    </select>
+
+    <select id="queryOrderLinesByOrderId" parameterType="int" resultType="OrderLine">
+        select id,productName,productPrice,productQty from OrderLine where order_Id = #{id}
+    </select>
+    <!--<select id="queryOrderById" resultMap="orderMap">
+        select o.*,ol.id olId,ol.productName productName,ol.productPrice productPrice,ol.productQty productQty from order1 o
+        JOIN
+        orderLine ol
+        ON o.id = ol.order_id
+        where o.id=#{id}
+    </select>-->
+
+    <!--userGeneratedKeys默认值为false，是否使用JDBC的getGeneratedKeys方法获取属性并赋值到keyProperty领域模型中-->
+    <insert id="save" parameterType="Order" keyProperty="id"  useGeneratedKeys="true">
+        insert into order1(orderNo,operName) values(#{orderNo},#{operName})
+    </insert>
+
+</mapper>
